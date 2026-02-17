@@ -635,14 +635,18 @@ function ChapterCard({
                 <div>
                   <p className="text-xs text-slate-500 mb-2">사진 ({imageFiles.length})</p>
                   <div className="flex flex-wrap gap-3">
-                    {imageFiles.map((f) => (
+                    {imageFiles.map((f, idx) => (
                       <div key={f.id} className="relative group">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden border border-slate-200">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden border border-slate-200 cursor-pointer" onClick={() => window.open(f.file_url, '_blank')}>
                           <img
                             src={f.file_url}
                             alt={f.file_name}
                             className="w-full h-full object-cover"
                           />
+                        </div>
+                        {/* 사진 번호 라벨 */}
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow whitespace-nowrap">
+                          사진{idx + 1}
                         </div>
                         {!locked && (
                           <button
@@ -655,6 +659,36 @@ function ChapterCard({
                       </div>
                     ))}
                   </div>
+                  {/* [사진N] 삽입 안내 */}
+                  {!locked && (
+                    <div className="mt-2 flex flex-wrap gap-1.5 items-center">
+                      <span className="text-xs text-slate-400">본문에 삽입:</span>
+                      {imageFiles.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            const tag = `[사진${idx + 1}]`
+                            const ta = textareaRef.current
+                            if (ta) {
+                              const start = ta.selectionStart
+                              const end = ta.selectionEnd
+                              const newBody = body.slice(0, start) + tag + body.slice(end)
+                              onBodyChange(newBody)
+                              setTimeout(() => {
+                                ta.focus()
+                                ta.selectionStart = ta.selectionEnd = start + tag.length
+                              }, 0)
+                            } else {
+                              onBodyChange(body + tag)
+                            }
+                          }}
+                          className="text-xs px-2 py-1 bg-indigo-50 text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors font-medium"
+                        >
+                          [사진{idx + 1}]
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : null
             })()}

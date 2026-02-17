@@ -1010,14 +1010,18 @@ function EditingModal({
                 <div className="mt-4 space-y-2">
                   <p className="text-sm font-semibold text-slate-700">사진 ({imageFiles.length})</p>
                   <div className="flex flex-wrap gap-3">
-                    {imageFiles.map(f => (
-                      <button
-                        key={f.id}
-                        onClick={() => window.open(f.file_url, '_blank')}
-                        className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-300 transition-colors"
-                      >
-                        <img src={f.file_url} alt={f.file_name} className="w-full h-full object-cover" />
-                      </button>
+                    {imageFiles.map((f, idx) => (
+                      <div key={f.id} className="relative">
+                        <button
+                          onClick={() => window.open(f.file_url, '_blank')}
+                          className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 hover:border-indigo-300 transition-colors"
+                        >
+                          <img src={f.file_url} alt={f.file_name} className="w-full h-full object-cover" />
+                        </button>
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow whitespace-nowrap">
+                          사진{idx + 1}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
