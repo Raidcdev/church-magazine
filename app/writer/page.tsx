@@ -411,6 +411,13 @@ export default function WriterPage() {
           <h1 className="text-xl font-bold text-white">교회 계간지</h1>
           <div className="flex items-center gap-3">
             <span className="text-sm text-slate-200">{session?.name}님</span>
+            <a
+              href="/guide/writer"
+              className="h-10 w-10 flex items-center justify-center text-sm font-bold text-slate-300 border border-slate-500 rounded-xl hover:bg-slate-600 transition-colors"
+              title="사용설명서"
+            >
+              ?
+            </a>
             <button
               onClick={handleLogout}
               className="h-10 px-4 text-sm font-semibold text-slate-300 border border-slate-500 rounded-xl hover:bg-slate-600 transition-colors"

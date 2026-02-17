@@ -470,6 +470,13 @@ export default function AdminPage() {
           <h1 className="text-lg md:text-xl font-bold text-white shrink-0">관리자</h1>
           <div className="flex items-center gap-2">
             <span className="text-sm text-slate-300 hidden md:inline">{session.name}님</span>
+            <a
+              href="/guide/admin"
+              className="h-8 w-8 flex items-center justify-center text-xs font-bold text-slate-300 border border-slate-500 rounded-lg hover:bg-slate-600 transition-colors"
+              title="사용설명서"
+            >
+              ?
+            </a>
             <button
               onClick={() => router.push('/admin/users')}
               className="h-8 px-3 text-xs font-medium text-slate-300 border border-slate-500 rounded-lg hover:bg-slate-600 transition-colors"

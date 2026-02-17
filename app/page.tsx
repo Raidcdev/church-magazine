@@ -112,6 +112,18 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-5">비밀번호를 잊으셨나요? 관리자에게 문의하세요</p>
+
+        {/* 사용설명서 링크 */}
+        <div className="mt-4 text-center">
+          <p className="text-xs text-slate-400 mb-2">처음이신가요? 사용설명서를 확인하세요</p>
+          <div className="flex justify-center gap-2">
+            <a href="/guide/writer" className="text-xs text-indigo-500 hover:text-indigo-700 underline underline-offset-2">필자</a>
+            <span className="text-slate-300">|</span>
+            <a href="/guide/editor" className="text-xs text-amber-600 hover:text-amber-700 underline underline-offset-2">교정자</a>
+            <span className="text-slate-300">|</span>
+            <a href="/guide/admin" className="text-xs text-emerald-600 hover:text-emerald-700 underline underline-offset-2">관리자</a>
+          </div>
+        </div>
       </div>
     </div>
   )
