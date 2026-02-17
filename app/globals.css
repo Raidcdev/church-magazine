@@ -23,9 +23,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 50대 친화 기본 스타일 */
-input, textarea, select, button {
-  font-size: 18px;
+/* iOS 자동 줌 방지: 실제 입력 필드만 16px 유지 */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select:not([class*="text-"]) {
+  font-size: 16px;
 }
 
 textarea {

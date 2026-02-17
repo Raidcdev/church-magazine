@@ -37,6 +37,9 @@ export default function UsersPage() {
   const [changingPwId, setChangingPwId] = useState<string | null>(null)
   const [newPassword, setNewPassword] = useState('')
 
+  // 권한 변경
+  const [changingRoleId, setChangingRoleId] = useState<string | null>(null)
+
   function showToast(message: string, type: 'success' | 'error') {
     setToast({ message, type })
     setTimeout(() => setToast(null), 3000)
@@ -155,6 +158,27 @@ export default function UsersPage() {
     }
   }
 
+  // 권한 변경
+  async function handleChangeRole(userId: string, newRole: string) {
+    if (userId === session?.userId) {
+      showToast('자신의 권한은 변경할 수 없습니다', 'error')
+      return
+    }
+    try {
+      const { error } = await (supabase
+        .from('users') as any)
+        .update({ role: newRole })
+        .eq('id', userId)
+
+      if (error) throw error
+      showToast('권한이 변경되었습니다', 'success')
+      setChangingRoleId(null)
+      await loadData()
+    } catch {
+      showToast('권한 변경에 실패했습니다', 'error')
+    }
+  }
+
   // 비밀번호 변경
   async function handleChangePassword(userId: string) {
     if (!/^\d{4}$/.test(newPassword)) {
@@ -198,7 +222,7 @@ export default function UsersPage() {
   if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f8f7f4]">
-        <p className="text-lg text-slate-400">로딩 중...</p>
+        <p className="text-sm text-slate-400">로딩 중...</p>
       </div>
     )
   }
@@ -207,7 +231,7 @@ export default function UsersPage() {
     <div className="min-h-screen bg-[#f8f7f4]">
       {/* 토스트 */}
       {toast && (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl text-white text-lg font-semibold shadow-xl ${
+        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl text-white text-sm font-semibold shadow-xl ${
           toast.type === 'success' ? 'bg-gradient-to-r from-green-600 to-green-500' : 'bg-gradient-to-r from-red-600 to-red-500'
         }`}>
           {toast.message}
@@ -224,16 +248,16 @@ export default function UsersPage() {
             >
               ← 대시보드
             </button>
-            <h1 className="text-2xl font-bold text-white">회원 관리</h1>
+            <h1 className="text-xl font-bold text-white">회원 관리</h1>
           </div>
-          <span className="text-lg text-slate-300">{users.length}명</span>
+          <span className="text-sm text-slate-300">{users.length}명</span>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-6 space-y-4">
         {loading ? (
           <div className="flex justify-center py-20">
-            <p className="text-lg text-slate-400">불러오는 중...</p>
+            <p className="text-sm text-slate-400">불러오는 중...</p>
           </div>
         ) : (
           <>
@@ -241,8 +265,8 @@ export default function UsersPage() {
             <div className="grid grid-cols-3 gap-3">
               {(['admin', 'editor', 'writer'] as const).map(role => (
                 <div key={role} className={`bg-white rounded-2xl shadow-sm shadow-slate-200/50 p-3 text-center ${roleCardAccent[role]}`}>
-                  <div className="text-base text-slate-600">{roleLabel[role]}</div>
-                  <div className="text-2xl font-bold text-slate-800 mt-1">
+                  <div className="text-sm text-slate-600">{roleLabel[role]}</div>
+                  <div className="text-xl font-bold text-slate-800 mt-1">
                     {users.filter(u => u.role === role).length}명
                   </div>
                 </div>
@@ -255,7 +279,7 @@ export default function UsersPage() {
                 <div key={user.id} className="bg-white rounded-2xl shadow-sm shadow-slate-200/50 p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="text-lg font-semibold text-slate-800">{user.name}</span>
+                      <span className="text-base font-semibold text-slate-800">{user.name}</span>
                       <span className={`px-2 py-0.5 text-sm font-medium rounded-full ${roleBadge[user.role] || 'bg-slate-100 text-slate-600'}`}>
                         {roleLabel[user.role] || user.role}
                       </span>
@@ -264,19 +288,32 @@ export default function UsersPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-2">
+                      {user.id !== session?.userId && (
+                        <button
+                          onClick={() => {
+                            setChangingRoleId(changingRoleId === user.id ? null : user.id)
+                            setChangingPwId(null)
+                            setNewPassword('')
+                          }}
+                          className="px-3 py-1.5 text-sm font-medium text-amber-600 border border-amber-200 rounded-xl hover:bg-amber-50 transition-colors"
+                        >
+                          권한변경
+                        </button>
+                      )}
                       <button
                         onClick={() => {
                           setChangingPwId(changingPwId === user.id ? null : user.id)
+                          setChangingRoleId(null)
                           setNewPassword('')
                         }}
-                        className="px-3 py-1.5 text-base font-medium text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors"
+                        className="px-3 py-1.5 text-sm font-medium text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors"
                       >
                         비번변경
                       </button>
                       {user.role !== 'admin' && !assignedUserIds.has(user.id) && (
                         <button
                           onClick={() => handleDelete(user)}
-                          className="px-3 py-1.5 text-base font-medium text-red-500 hover:text-red-700 transition-colors"
+                          className="px-3 py-1.5 text-sm font-medium text-red-500 hover:text-red-700 transition-colors"
                         >
                           삭제
                         </button>
@@ -284,10 +321,41 @@ export default function UsersPage() {
                     </div>
                   </div>
 
+                  {/* 권한 변경 UI */}
+                  {changingRoleId === user.id && (
+                    <div className="mt-3 flex items-center gap-3 pt-3 border-t border-slate-100">
+                      <span className="text-sm text-slate-600 shrink-0">권한:</span>
+                      {(['writer', 'editor', 'admin'] as const).map(role => (
+                        <button
+                          key={role}
+                          onClick={() => handleChangeRole(user.id, role)}
+                          disabled={user.role === role}
+                          className={`px-4 py-1.5 text-sm font-medium rounded-xl transition-all ${
+                            user.role === role
+                              ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                              : role === 'admin'
+                                ? 'text-purple-600 border border-purple-200 hover:bg-purple-50'
+                                : role === 'editor'
+                                  ? 'text-amber-600 border border-amber-200 hover:bg-amber-50'
+                                  : 'text-indigo-600 border border-indigo-200 hover:bg-indigo-50'
+                          }`}
+                        >
+                          {roleLabel[role]}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setChangingRoleId(null)}
+                        className="px-3 py-1.5 text-sm text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+                      >
+                        취소
+                      </button>
+                    </div>
+                  )}
+
                   {/* 비밀번호 변경 폼 */}
                   {changingPwId === user.id && (
                     <div className="mt-3 flex items-center gap-3 pt-3 border-t border-slate-100">
-                      <span className="text-base text-slate-600 shrink-0">새 비번:</span>
+                      <span className="text-sm text-slate-600 shrink-0">새 비번:</span>
                       <input
                         type="text"
                         inputMode="numeric"
@@ -295,18 +363,18 @@ export default function UsersPage() {
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
                         placeholder="숫자 4자리"
-                        className="h-12 w-32 px-3 text-lg text-center tracking-[0.3em] bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:outline-none transition-all"
+                        className="h-9 w-32 px-3 text-base text-center tracking-[0.2em] bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:outline-none transition-all"
                       />
                       <button
                         onClick={() => handleChangePassword(user.id)}
                         disabled={newPassword.length < 4}
-                        className="h-12 px-4 text-base font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-sm hover:from-indigo-700 hover:to-indigo-600 disabled:from-slate-300 disabled:to-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
+                        className="h-9 px-4 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-sm hover:from-indigo-700 hover:to-indigo-600 disabled:from-slate-300 disabled:to-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
                       >
                         변경
                       </button>
                       <button
                         onClick={() => { setChangingPwId(null); setNewPassword('') }}
-                        className="h-12 px-3 text-base text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+                        className="h-9 px-3 text-sm text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
                       >
                         취소
                       </button>
@@ -319,20 +387,20 @@ export default function UsersPage() {
             {/* 추가 폼 */}
             {showAddForm && (
               <div className="bg-white rounded-2xl shadow-sm border border-indigo-100 p-6 space-y-4">
-                <h3 className="text-lg font-semibold text-slate-800">새 회원 추가</h3>
+                <h3 className="text-base font-semibold text-slate-800">새 회원 추가</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-base text-slate-600 mb-1">이름</label>
+                    <label className="block text-sm text-slate-600 mb-1">이름</label>
                     <input
                       type="text"
                       value={addForm.name}
                       onChange={e => setAddForm({ ...addForm, name: e.target.value })}
                       placeholder="이름을 입력하세요"
-                      className="w-full h-14 px-4 text-lg bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none transition-all"
+                      className="w-full h-10 px-4 text-base bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-base text-slate-600 mb-1">비밀번호 (숫자 4자리)</label>
+                    <label className="block text-sm text-slate-600 mb-1">비밀번호 (숫자 4자리)</label>
                     <input
                       type="text"
                       inputMode="numeric"
@@ -340,15 +408,15 @@ export default function UsersPage() {
                       value={addForm.password}
                       onChange={e => setAddForm({ ...addForm, password: e.target.value.replace(/\D/g, '').slice(0, 4) })}
                       placeholder="0000"
-                      className="w-full h-14 px-4 text-lg text-center tracking-[0.5em] bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none transition-all"
+                      className="w-full h-10 px-4 text-base text-center tracking-[0.3em] bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-base text-slate-600 mb-1">역할</label>
+                    <label className="block text-sm text-slate-600 mb-1">역할</label>
                     <select
                       value={addForm.role}
                       onChange={e => setAddForm({ ...addForm, role: e.target.value })}
-                      className="w-full h-14 px-4 text-lg bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none transition-all"
+                      className="w-full h-10 px-4 text-base bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none transition-all"
                     >
                       <option value="writer">필자</option>
                       <option value="editor">교정자</option>
@@ -360,13 +428,13 @@ export default function UsersPage() {
                   <button
                     onClick={handleAdd}
                     disabled={adding}
-                    className="flex-1 h-14 text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-sm hover:from-indigo-700 hover:to-indigo-600 disabled:from-slate-300 disabled:to-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
+                    className="flex-1 h-10 text-base font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-xl shadow-sm hover:from-indigo-700 hover:to-indigo-600 disabled:from-slate-300 disabled:to-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
                   >
                     {adding ? '추가 중...' : '추가하기'}
                   </button>
                   <button
                     onClick={() => { setShowAddForm(false); setAddForm({ name: '', password: '', role: 'writer' }) }}
-                    className="flex-1 h-14 text-lg font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+                    className="flex-1 h-10 text-base font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
                   >
                     취소
                   </button>
@@ -378,7 +446,7 @@ export default function UsersPage() {
             {!showAddForm && (
               <button
                 onClick={() => setShowAddForm(true)}
-                className="w-full h-14 text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-2xl shadow-sm hover:from-indigo-700 hover:to-indigo-600 transition-all"
+                className="w-full h-10 text-base font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-2xl shadow-sm hover:from-indigo-700 hover:to-indigo-600 transition-all"
               >
                 + 회원 추가
               </button>
