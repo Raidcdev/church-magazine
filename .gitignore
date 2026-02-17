@@ -32,6 +32,11 @@ yarn-error.log*
 WORKFLOW.md
 .claude/
 
+# screenshots & playwright
+*.png
+*.jpg
+.playwright-mcp/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
