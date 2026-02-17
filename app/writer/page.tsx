@@ -39,10 +39,10 @@ type Toast = {
 }
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
-  draft: { label: '작성중', cls: 'bg-gray-200 text-gray-700' },
-  submitted: { label: '제출완료', cls: 'bg-blue-100 text-blue-700' },
-  editing: { label: '교정중', cls: 'bg-yellow-100 text-yellow-700' },
-  confirmed: { label: '확정', cls: 'bg-green-100 text-green-700' },
+  draft: { label: '작성중', cls: 'bg-gray-200 text-gray-700 shadow-sm' },
+  submitted: { label: '제출완료', cls: 'bg-blue-100 text-blue-700 shadow-sm' },
+  editing: { label: '교정중', cls: 'bg-yellow-100 text-yellow-700 shadow-sm' },
+  confirmed: { label: '확정', cls: 'bg-green-100 text-green-700 shadow-sm' },
 }
 
 export default function WriterPage() {
@@ -328,8 +328,8 @@ export default function WriterPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-lg text-gray-500">불러오는 중...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f7f4]">
+        <p className="text-lg text-slate-400">불러오는 중...</p>
       </div>
     )
   }
@@ -338,12 +338,12 @@ export default function WriterPage() {
     status === 'submitted' || status === 'editing' || status === 'confirmed'
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f8f7f4]">
       {/* 토스트 */}
       {toast && (
         <div
-          className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl text-white text-lg font-semibold shadow-lg ${
-            toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+          className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl text-white text-lg font-semibold shadow-xl ${
+            toast.type === 'success' ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' : 'bg-gradient-to-r from-red-500 to-red-600'
           }`}
         >
           {toast.message}
@@ -351,14 +351,14 @@ export default function WriterPage() {
       )}
 
       {/* 헤더 */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-gradient-to-r from-slate-800 to-slate-700 shadow-sm sticky top-0 z-40">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">📖 교회 계간지</h1>
+          <h1 className="text-2xl font-bold text-white">교회 계간지</h1>
           <div className="flex items-center gap-3">
-            <span className="text-lg text-gray-700">{session?.name}님</span>
+            <span className="text-lg text-slate-200">{session?.name}님</span>
             <button
               onClick={handleLogout}
-              className="h-12 px-4 text-lg font-semibold text-gray-600 border-2 border-gray-300 rounded-xl hover:bg-gray-100 transition-colors"
+              className="h-12 px-4 text-lg font-semibold text-slate-300 border border-slate-500 rounded-xl hover:bg-slate-600 transition-colors"
             >
               로그아웃
             </button>
@@ -369,8 +369,8 @@ export default function WriterPage() {
       {/* 메인 */}
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-4">
         {chapters.length === 0 ? (
-          <div className="bg-white rounded-xl p-8 text-center">
-            <p className="text-lg text-gray-500">배정된 원고가 없습니다.</p>
+          <div className="bg-white rounded-2xl shadow-sm shadow-slate-200/50 p-8 text-center">
+            <p className="text-lg text-slate-500">배정된 원고가 없습니다.</p>
           </div>
         ) : (
           chapters.map((ch) => (
@@ -449,15 +449,15 @@ function ChapterCard({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-sm shadow-slate-200/50 overflow-hidden">
       {/* 카드 헤더 */}
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-4 py-4 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-4 text-left hover:bg-slate-50 transition-colors"
       >
         <div className="flex items-center gap-3 min-w-0">
-          <span className="text-lg text-gray-400">{expanded ? '▼' : '▶'}</span>
-          <span className="text-lg font-semibold text-gray-900 truncate">
+          <span className="text-lg text-slate-400">{expanded ? '▼' : '▶'}</span>
+          <span className="text-lg font-semibold text-slate-800 truncate">
             {chapter.chapter_code}. {chapter.title}
           </span>
         </div>
@@ -470,7 +470,7 @@ function ChapterCard({
 
       {/* 카드 본문 */}
       {expanded && (
-        <div className="px-4 pb-5 space-y-4 border-t border-gray-100 pt-4">
+        <div className="px-4 pb-5 space-y-4 border-t border-slate-100 pt-4">
           {/* textarea */}
           <div>
             <textarea
@@ -479,14 +479,14 @@ function ChapterCard({
               onChange={(e) => onBodyChange(e.target.value)}
               readOnly={locked}
               placeholder="원고를 입력하세요..."
-              className={`w-full text-lg leading-relaxed rounded-xl border-2 p-4 focus:outline-none resize-none transition-colors ${
+              className={`w-full text-lg leading-relaxed rounded-xl border p-4 focus:outline-none resize-none transition-all ${
                 locked
-                  ? 'bg-gray-100 border-gray-200 text-gray-700 cursor-default'
-                  : 'bg-white border-gray-300 focus:border-blue-500'
+                  ? 'bg-slate-100 border-slate-200 text-slate-600 cursor-default'
+                  : 'bg-slate-50 border-slate-200 focus:border-indigo-400 focus:bg-white'
               }`}
               style={{ minHeight: '200px' }}
             />
-            <p className="text-base text-gray-500 mt-1 text-right">{body.length}자</p>
+            <p className="text-base text-slate-500 mt-1 text-right">{body.length}자</p>
           </div>
 
           {/* 사진 영역 */}
@@ -505,9 +505,9 @@ function ChapterCard({
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="h-14 px-6 text-lg font-semibold text-gray-700 bg-gray-100 border-2 border-gray-300 rounded-xl hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                  className="h-14 px-6 text-lg font-semibold text-slate-600 bg-slate-100 border border-slate-200 rounded-xl hover:bg-slate-200 disabled:opacity-50 transition-colors"
                 >
-                  {uploading ? '업로드 중...' : '📷 사진 추가'}
+                  {uploading ? '업로드 중...' : '사진 추가'}
                 </button>
               </>
             )}
@@ -517,7 +517,7 @@ function ChapterCard({
               <div className="flex flex-wrap gap-3">
                 {chapter.files.map((f) => (
                   <div key={f.id} className="relative group">
-                    <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-gray-200">
+                    <div className="w-20 h-20 rounded-lg overflow-hidden border border-slate-200">
                       <img
                         src={f.file_url}
                         alt={f.file_name}
@@ -544,14 +544,14 @@ function ChapterCard({
               <button
                 onClick={onSave}
                 disabled={saving}
-                className="w-full h-14 bg-gray-500 text-white text-lg font-semibold rounded-xl hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="w-full h-14 bg-slate-600 text-white text-lg font-semibold rounded-xl hover:bg-slate-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? '저장 중...' : '임시 저장'}
               </button>
               <button
                 onClick={onSubmit}
                 disabled={submitting || !body.trim()}
-                className="w-full h-14 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="w-full h-14 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-lg font-semibold rounded-xl hover:from-indigo-700 hover:to-indigo-600 shadow-sm disabled:from-slate-300 disabled:to-slate-300 disabled:shadow-none disabled:cursor-not-allowed transition-all"
               >
                 {submitting ? '제출 중...' : '제출하기'}
               </button>

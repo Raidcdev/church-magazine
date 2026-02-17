@@ -42,59 +42,76 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-slate-50 via-stone-50 to-amber-50/30">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">교회 계간지</h1>
-          <p className="text-gray-500 text-lg">원고 제출 시스템</p>
+        {/* Logo & Title */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl shadow-lg shadow-indigo-200 mb-5">
+            <span className="text-3xl">&#x271A;</span>
+          </div>
+          <h1 className="text-3xl font-bold text-slate-800 tracking-tight">교회 계간지</h1>
+          <p className="text-slate-500 text-lg mt-1">원고 제출 시스템</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-5">
-          <div>
-            <label htmlFor="name" className="block text-lg font-medium text-gray-700 mb-2">
-              이름
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="이름을 입력하세요"
-              required
-              autoComplete="name"
-              className="w-full h-14 px-4 text-lg border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
-            />
-          </div>
+        {/* Login Card */}
+        <div className="bg-white rounded-2xl shadow-lg shadow-slate-200/60 p-7">
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label htmlFor="name" className="block text-base font-semibold text-slate-600 mb-2">
+                이름
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="이름을 입력하세요"
+                required
+                autoComplete="name"
+                className="w-full h-14 px-4 text-lg bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none transition-all"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="password" className="block text-lg font-medium text-gray-700 mb-2">
-              비밀번호
-            </label>
-            <input
-              id="password"
-              type="password"
-              inputMode="numeric"
-              maxLength={4}
-              value={password}
-              onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
-              placeholder="숫자 4자리"
-              required
-              className="w-full h-14 px-4 text-lg border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none tracking-[0.5em] text-center"
-            />
-          </div>
+            <div>
+              <label htmlFor="password" className="block text-base font-semibold text-slate-600 mb-2">
+                비밀번호
+              </label>
+              <input
+                id="password"
+                type="password"
+                inputMode="numeric"
+                maxLength={4}
+                value={password}
+                onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                placeholder="숫자 4자리"
+                required
+                className="w-full h-14 px-4 text-lg bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none tracking-[0.5em] text-center transition-all"
+              />
+            </div>
 
-          {error && (
-            <p className="text-red-600 text-lg font-medium text-center">{error}</p>
-          )}
+            {error && (
+              <div className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-100 rounded-xl">
+                <span className="text-red-400 text-lg">!</span>
+                <p className="text-red-600 text-base font-medium">{error}</p>
+              </div>
+            )}
 
-          <button
-            type="submit"
-            disabled={loading || name.length === 0 || password.length < 4}
-            className="w-full h-14 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-          >
-            {loading ? '로그인 중...' : '로그인'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading || name.length === 0 || password.length < 4}
+              className="w-full h-14 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-lg font-semibold rounded-xl hover:from-indigo-700 hover:to-indigo-600 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md disabled:shadow-none"
+            >
+              {loading ? (
+                <span className="inline-flex items-center gap-2">
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                  로그인 중...
+                </span>
+              ) : '로그인'}
+            </button>
+          </form>
+        </div>
+
+        <p className="text-center text-sm text-slate-400 mt-6">비밀번호를 잊으셨나요? 관리자에게 문의하세요</p>
       </div>
     </div>
   )

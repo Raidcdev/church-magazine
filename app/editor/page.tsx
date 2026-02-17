@@ -267,11 +267,11 @@ export default function EditorPage() {
   // 상태 배지
   function StatusBadge({ status }: { status: string }) {
     const map: Record<string, { label: string; cls: string }> = {
-      submitted: { label: '제출완료', cls: 'bg-blue-100 text-blue-700' },
-      editing: { label: '교정중', cls: 'bg-yellow-100 text-yellow-700' },
-      confirmed: { label: '확정', cls: 'bg-green-100 text-green-700' },
+      submitted: { label: '제출완료', cls: 'bg-indigo-50 text-indigo-600' },
+      editing: { label: '교정중', cls: 'bg-amber-50 text-amber-600' },
+      confirmed: { label: '확정', cls: 'bg-emerald-50 text-emerald-600' },
     }
-    const info = map[status] ?? { label: status, cls: 'bg-gray-100 text-gray-700' }
+    const info = map[status] ?? { label: status, cls: 'bg-slate-100 text-slate-600' }
     return (
       <span className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${info.cls}`}>
         {info.label}
@@ -281,19 +281,19 @@ export default function EditorPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-lg text-gray-500">불러오는 중...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f7f4]">
+        <p className="text-lg text-slate-400">불러오는 중...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f8f7f4]">
       {/* 토스트 */}
       {toast && (
         <div
-          className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl text-white text-lg font-semibold shadow-lg transition-all ${
-            toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+          className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl text-white text-lg font-semibold shadow-xl transition-all ${
+            toast.type === 'success' ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' : 'bg-gradient-to-r from-red-500 to-red-600'
           }`}
         >
           {toast.message}
@@ -301,14 +301,14 @@ export default function EditorPage() {
       )}
 
       {/* 헤더 */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-gradient-to-r from-slate-800 to-slate-700 shadow-sm sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">📝 교정 작업</h1>
+          <h1 className="text-2xl font-bold text-white">교정 작업</h1>
           <div className="flex items-center gap-3">
-            <span className="text-lg text-gray-700">{session?.name}님</span>
+            <span className="text-lg text-slate-200">{session?.name}님</span>
             <button
               onClick={handleLogout}
-              className="h-12 px-4 text-lg font-semibold text-gray-600 border-2 border-gray-300 rounded-xl hover:bg-gray-100 transition-colors"
+              className="h-12 px-4 text-lg font-semibold text-slate-300 border border-slate-500 rounded-xl hover:bg-slate-600 transition-colors"
             >
               로그아웃
             </button>
@@ -318,8 +318,8 @@ export default function EditorPage() {
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-5">
         {chapters.length === 0 ? (
-          <div className="bg-white rounded-xl p-8 text-center">
-            <p className="text-lg text-gray-500">제출된 원고가 없습니다.</p>
+          <div className="bg-white rounded-2xl shadow-sm shadow-slate-200/50 p-8 text-center">
+            <p className="text-lg text-slate-400">제출된 원고가 없습니다.</p>
           </div>
         ) : (
           <>
@@ -329,18 +329,18 @@ export default function EditorPage() {
                 <button
                   key={ch.id}
                   onClick={() => handleSelect(ch)}
-                  className={`w-full text-left px-4 py-3 rounded-xl transition-colors flex items-center justify-between gap-3 ${
+                  className={`w-full text-left px-4 py-3 rounded-2xl transition-all flex items-center justify-between gap-3 ${
                     selectedId === ch.id
-                      ? 'bg-white border-2 border-blue-500 shadow-sm'
-                      : 'bg-white border-2 border-transparent hover:border-gray-300'
+                      ? 'bg-white rounded-2xl shadow-sm border-2 border-indigo-400'
+                      : 'bg-white/70 rounded-2xl hover:bg-white hover:shadow-sm border-2 border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-lg font-semibold text-gray-900 truncate">
+                    <span className="text-lg font-semibold text-slate-800 truncate">
                       {ch.chapter_code}. {ch.title}
                     </span>
                     {ch.writer_name && (
-                      <span className="text-base text-gray-500 shrink-0">({ch.writer_name})</span>
+                      <span className="text-base text-slate-400 shrink-0">({ch.writer_name})</span>
                     )}
                   </div>
                   <StatusBadge status={ch.status} />
@@ -353,10 +353,10 @@ export default function EditorPage() {
               <div className="space-y-5">
                 {/* 확정 배지 */}
                 {selected.status === 'confirmed' && (
-                  <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 text-center space-y-1">
-                    <p className="text-2xl font-bold text-green-700">✅ 확정됨</p>
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-1">
+                    <p className="text-2xl font-bold text-emerald-700">확정됨</p>
                     {selected.confirmed_at && (
-                      <p className="text-base text-green-600">
+                      <p className="text-base text-emerald-600">
                         {new Date(selected.confirmed_at).toLocaleString('ko-KR')}
                       </p>
                     )}
@@ -369,8 +369,8 @@ export default function EditorPage() {
                     onClick={() => setActiveTab('original')}
                     className={`flex-1 h-12 text-lg font-semibold rounded-xl transition-colors ${
                       activeTab === 'original'
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-white text-gray-600 border-2 border-gray-300'
+                        ? 'bg-slate-800 text-white shadow-sm'
+                        : 'bg-white text-slate-500 border border-slate-200'
                     }`}
                   >
                     원본 보기
@@ -379,8 +379,8 @@ export default function EditorPage() {
                     onClick={() => setActiveTab('edit')}
                     className={`flex-1 h-12 text-lg font-semibold rounded-xl transition-colors ${
                       activeTab === 'edit'
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-white text-gray-600 border-2 border-gray-300'
+                        ? 'bg-slate-800 text-white shadow-sm'
+                        : 'bg-white text-slate-500 border border-slate-200'
                     }`}
                   >
                     교정하기
@@ -392,20 +392,20 @@ export default function EditorPage() {
                   {/* 원본 */}
                   <div className={`space-y-3 ${activeTab !== 'original' ? 'hidden md:block' : ''}`}>
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-gray-900">📄 원본</span>
-                      <span className="text-base text-gray-500">
+                      <span className="text-lg font-bold text-slate-800">원본</span>
+                      <span className="text-base text-slate-400">
                         {(selected.original_body ?? '').length}자
                       </span>
                     </div>
-                    <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 min-h-[200px] whitespace-pre-wrap text-lg leading-relaxed text-gray-800">
+                    <div className="bg-slate-50/80 border border-slate-100 rounded-2xl p-4 min-h-[200px] whitespace-pre-wrap text-lg leading-relaxed text-slate-800">
                       {selected.original_body || '(내용 없음)'}
                     </div>
 
                     {/* 첨부 사진 */}
                     {selected.files.length > 0 && (
                       <div className="space-y-2">
-                        <p className="text-lg font-bold text-gray-900">
-                          📷 첨부 사진 ({selected.files.length}장)
+                        <p className="text-lg font-bold text-slate-800">
+                          첨부 사진 ({selected.files.length}장)
                         </p>
                         <div className="flex flex-wrap gap-3">
                           {selected.files.map((f) => (
@@ -414,14 +414,14 @@ export default function EditorPage() {
                               onClick={() => window.open(f.file_url, '_blank')}
                               className="group flex flex-col items-center gap-1"
                             >
-                              <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-gray-200 group-hover:border-blue-400 transition-colors">
+                              <div className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 group-hover:border-indigo-300 transition-colors">
                                 <img
                                   src={f.file_url}
                                   alt={f.file_name}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
-                              <span className="text-xs text-gray-500 max-w-[80px] truncate">
+                              <span className="text-xs text-slate-400 max-w-[80px] truncate">
                                 {f.file_name}
                               </span>
                             </button>
@@ -434,18 +434,18 @@ export default function EditorPage() {
                   {/* 교정본 */}
                   <div className={`space-y-3 ${activeTab !== 'edit' ? 'hidden md:block' : ''}`}>
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-gray-900">✏️ 교정본</span>
-                      <span className="text-base text-gray-500">{editedBody.length}자</span>
+                      <span className="text-lg font-bold text-slate-800">교정본</span>
+                      <span className="text-base text-slate-400">{editedBody.length}자</span>
                     </div>
                     {selected.status === 'confirmed' ? (
-                      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 min-h-[200px] whitespace-pre-wrap text-lg leading-relaxed text-gray-800">
+                      <div className="bg-slate-50/80 border border-slate-100 rounded-2xl p-4 min-h-[200px] whitespace-pre-wrap text-lg leading-relaxed text-slate-800">
                         {editedBody || '(내용 없음)'}
                       </div>
                     ) : (
                       <textarea
                         value={editedBody}
                         onChange={(e) => setEditedBody(e.target.value)}
-                        className="w-full min-h-[200px] bg-white border-2 border-gray-300 rounded-xl p-4 text-lg leading-relaxed text-gray-800 focus:border-blue-500 focus:outline-none resize-y"
+                        className="w-full min-h-[200px] bg-white border border-slate-200 rounded-2xl p-4 text-lg leading-relaxed text-slate-800 focus:border-indigo-400 focus:outline-none resize-y transition-all"
                         placeholder="교정 내용을 입력하세요"
                       />
                     )}
@@ -456,14 +456,14 @@ export default function EditorPage() {
                         <button
                           onClick={handleSave}
                           disabled={saving}
-                          className="flex-1 h-14 bg-gray-500 text-white text-lg font-semibold rounded-xl hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                          className="flex-1 h-14 bg-slate-600 text-white text-lg font-semibold rounded-xl shadow-sm hover:bg-slate-700 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
                         >
                           {saving ? '저장 중...' : '저장'}
                         </button>
                         <button
                           onClick={handleConfirm}
                           disabled={confirming || !editedBody.trim()}
-                          className="flex-1 h-14 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                          className="flex-1 h-14 bg-gradient-to-r from-red-500 to-red-600 text-white text-lg font-semibold rounded-xl shadow-sm hover:from-red-600 hover:to-red-700 disabled:bg-slate-300 disabled:from-slate-300 disabled:to-slate-300 disabled:cursor-not-allowed transition-colors"
                         >
                           {confirming ? '확정 중...' : '확정하기'}
                         </button>

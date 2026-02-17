@@ -53,8 +53,8 @@ function ToastMessage({ toast, onClose }: { toast: Toast; onClose: () => void })
   }, [onClose])
 
   return (
-    <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-lg font-medium ${
-      toast.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-xl text-lg font-medium ${
+      toast.type === 'success' ? 'bg-gradient-to-r from-emerald-500 to-emerald-400 text-white' : 'bg-gradient-to-r from-red-500 to-red-400 text-white'
     }`}>
       {toast.message}
     </div>
@@ -174,10 +174,10 @@ export default function AdminPage() {
   }
 
   const statusConfig: Record<string, { emoji: string; label: string; badgeCls: string; cardCls: string }> = {
-    draft: { emoji: '⚪', label: '미제출', badgeCls: 'bg-gray-200 text-gray-700', cardCls: 'bg-gray-50 border-gray-300' },
-    submitted: { emoji: '🔵', label: '제출완료', badgeCls: 'bg-blue-100 text-blue-700', cardCls: 'bg-blue-50 border-blue-300' },
-    editing: { emoji: '🟡', label: '교정중', badgeCls: 'bg-yellow-100 text-yellow-700', cardCls: 'bg-yellow-50 border-yellow-300' },
-    confirmed: { emoji: '🟢', label: '확정', badgeCls: 'bg-green-100 text-green-700', cardCls: 'bg-green-50 border-green-300' },
+    draft: { emoji: '⚪', label: '미제출', badgeCls: 'bg-slate-100 text-slate-600', cardCls: 'bg-slate-50 border border-slate-200' },
+    submitted: { emoji: '🔵', label: '제출완료', badgeCls: 'bg-indigo-50 text-indigo-600', cardCls: 'bg-indigo-50 border border-indigo-100' },
+    editing: { emoji: '🟡', label: '교정중', badgeCls: 'bg-amber-50 text-amber-600', cardCls: 'bg-amber-50 border border-amber-100' },
+    confirmed: { emoji: '🟢', label: '확정', badgeCls: 'bg-emerald-50 text-emerald-600', cardCls: 'bg-emerald-50 border border-emerald-100' },
   }
 
   function getStatusCounts() {
@@ -333,8 +333,8 @@ export default function AdminPage() {
   // ─── Auth gate ───────────────────────────────────────
   if (!authChecked || !session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-lg text-gray-500">로딩 중...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#f8f7f4]">
+        <p className="text-lg text-slate-400">로딩 중...</p>
       </div>
     )
   }
@@ -343,18 +343,18 @@ export default function AdminPage() {
 
   // ─── Render ──────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f8f7f4]">
       {toast && <ToastMessage toast={toast} onClose={() => setToast(null)} />}
 
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <header className="bg-gradient-to-r from-slate-800 to-slate-700 shadow-sm sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">⚙️ 관리자 대시보드</h1>
+          <h1 className="text-2xl font-bold text-white">관리자 대시보드</h1>
           <div className="flex items-center gap-3">
-            <span className="text-lg text-gray-600">{session.name}님</span>
+            <span className="text-lg text-slate-200">{session.name}님</span>
             <button
               onClick={handleLogout}
-              className="h-10 px-4 text-base font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+              className="h-10 px-4 text-base font-medium text-slate-300 border border-slate-500 rounded-lg hover:bg-slate-600 transition-colors"
             >
               로그아웃
             </button>
@@ -363,14 +363,14 @@ export default function AdminPage() {
       </header>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 flex gap-0">
           <button
             onClick={() => setActiveTab('status')}
             className={`px-6 py-3 text-lg font-medium border-b-2 transition-colors ${
               activeTab === 'status'
-                ? 'text-blue-600 border-blue-600'
-                : 'text-gray-500 border-transparent hover:text-gray-700'
+                ? 'text-indigo-600 border-indigo-600'
+                : 'text-slate-400 border-transparent hover:text-slate-600'
             }`}
           >
             현황
@@ -379,8 +379,8 @@ export default function AdminPage() {
             onClick={() => setActiveTab('toc')}
             className={`px-6 py-3 text-lg font-medium border-b-2 transition-colors ${
               activeTab === 'toc'
-                ? 'text-blue-600 border-blue-600'
-                : 'text-gray-500 border-transparent hover:text-gray-700'
+                ? 'text-indigo-600 border-indigo-600'
+                : 'text-slate-400 border-transparent hover:text-slate-600'
             }`}
           >
             목차관리
@@ -392,7 +392,7 @@ export default function AdminPage() {
       <main className="max-w-6xl mx-auto px-4 py-6">
         {loading ? (
           <div className="flex justify-center py-20">
-            <p className="text-lg text-gray-500">데이터를 불러오는 중...</p>
+            <p className="text-lg text-slate-400">데이터를 불러오는 중...</p>
           </div>
         ) : activeTab === 'status' ? (
           <StatusTab
@@ -447,61 +447,61 @@ function StatusTab({
         {(['draft', 'submitted', 'editing', 'confirmed'] as const).map(status => {
           const cfg = statusConfig[status]
           return (
-            <div key={status} className={`border rounded-xl p-4 ${cfg.cardCls}`}>
-              <div className="text-base text-gray-600">{cfg.emoji} {cfg.label}</div>
-              <div className="text-2xl font-bold mt-1">{counts[status]}건</div>
+            <div key={status} className={`rounded-2xl shadow-sm p-4 ${cfg.cardCls}`}>
+              <div className="text-base text-slate-600">{cfg.emoji} {cfg.label}</div>
+              <div className="text-2xl font-bold mt-1 text-slate-800">{counts[status]}건</div>
             </div>
           )
         })}
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="hidden md:block bg-white rounded-2xl shadow-sm shadow-slate-200/50 overflow-hidden">
         <table className="w-full text-lg">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-12">#</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-20">코드</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">제목</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-24">필자</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-28">상태</th>
-              <th className="px-4 py-3 text-center font-semibold text-gray-700 w-16">📷</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-48">액션</th>
+            <tr className="bg-slate-50/50 border-b border-slate-200">
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-12">#</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-20">코드</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600">제목</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-24">필자</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-28">상태</th>
+              <th className="px-4 py-3 text-center font-semibold text-slate-600 w-16">📷</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-48">액션</th>
             </tr>
           </thead>
           <tbody>
             {chapters.map((ch, idx) => {
               const cfg = statusConfig[ch.status] || statusConfig.draft
               return (
-                <tr key={ch.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="px-4 py-3 text-gray-500">{idx + 1}</td>
-                  <td className="px-4 py-3 font-medium">{ch.chapter_code}</td>
-                  <td className="px-4 py-3">{ch.title}</td>
-                  <td className="px-4 py-3 text-gray-600">{ch.writer_name || '-'}</td>
+                <tr key={ch.id} className="border-b border-slate-100 hover:bg-slate-50/50">
+                  <td className="px-4 py-3 text-slate-400">{idx + 1}</td>
+                  <td className="px-4 py-3 font-medium text-slate-800">{ch.chapter_code}</td>
+                  <td className="px-4 py-3 text-slate-800">{ch.title}</td>
+                  <td className="px-4 py-3 text-slate-600">{ch.writer_name || '-'}</td>
                   <td className="px-4 py-3">
                     <span className={`inline-block px-2 py-1 rounded-lg text-base font-medium ${cfg.badgeCls}`}>
                       {cfg.emoji}{cfg.label}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-center text-gray-600">{ch.file_count}</td>
+                  <td className="px-4 py-3 text-center text-slate-600">{ch.file_count}</td>
                   <td className="px-4 py-3">
                     {ch.status === 'confirmed' ? (
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => onDownload(ch)}
-                          className="px-3 py-1.5 text-base font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
+                          className="px-3 py-1.5 text-base font-medium text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors"
                         >
                           다운로드
                         </button>
                         <button
                           onClick={() => onUnconfirm(ch.id)}
-                          className="px-3 py-1.5 text-base font-medium text-red-600 hover:text-red-800 transition-colors"
+                          className="px-3 py-1.5 text-base font-medium text-red-500 hover:text-red-700 transition-colors"
                         >
                           확정해제
                         </button>
                       </div>
                     ) : (
-                      <span className="text-gray-400">-</span>
+                      <span className="text-slate-400">-</span>
                     )}
                   </td>
                 </tr>
@@ -509,7 +509,7 @@ function StatusTab({
             })}
             {chapters.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-gray-400 text-lg">
+                <td colSpan={7} className="px-4 py-10 text-center text-slate-400 text-lg">
                   등록된 항목이 없습니다
                 </td>
               </tr>
@@ -523,9 +523,9 @@ function StatusTab({
         {chapters.map(ch => {
           const cfg = statusConfig[ch.status] || statusConfig.draft
           return (
-            <div key={ch.id} className="bg-white rounded-xl border border-gray-200 p-4 space-y-2">
-              <div className="text-lg font-semibold">{ch.chapter_code}. {ch.title}</div>
-              <div className="text-base text-gray-600">
+            <div key={ch.id} className="bg-white rounded-2xl shadow-sm shadow-slate-200/50 p-4 space-y-2">
+              <div className="text-lg font-semibold text-slate-800">{ch.chapter_code}. {ch.title}</div>
+              <div className="text-base text-slate-600">
                 필자: {ch.writer_name || '미배정'} &nbsp; 📷 {ch.file_count}장
               </div>
               <div>
@@ -537,13 +537,13 @@ function StatusTab({
                 <div className="flex items-center gap-3 pt-1">
                   <button
                     onClick={() => onDownload(ch)}
-                    className="h-12 px-4 text-base font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
+                    className="h-12 px-4 text-base font-medium text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors"
                   >
                     다운로드
                   </button>
                   <button
                     onClick={() => onUnconfirm(ch.id)}
-                    className="h-12 px-4 text-base font-medium text-red-600 hover:text-red-800 transition-colors"
+                    className="h-12 px-4 text-base font-medium text-red-500 hover:text-red-700 transition-colors"
                   >
                     확정해제
                   </button>
@@ -553,7 +553,7 @@ function StatusTab({
           )
         })}
         {chapters.length === 0 && (
-          <div className="text-center py-10 text-gray-400 text-lg">등록된 항목이 없습니다</div>
+          <div className="text-center py-10 text-slate-400 text-lg">등록된 항목이 없습니다</div>
         )}
       </div>
     </div>
@@ -597,27 +597,27 @@ function TocTab({
   const categoryOptions = ['봄', '여름', '가을', '겨울']
   const canDelete = (status: string) => status === 'draft'
 
-  const inputCls = 'h-12 px-3 text-lg border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none'
-  const selectCls = 'h-12 px-3 text-lg border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none bg-white'
+  const inputCls = 'h-12 px-3 text-lg bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none transition-all'
+  const selectCls = 'h-12 px-3 text-lg bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-400 focus:bg-white focus:outline-none transition-all'
 
   return (
     <div className="space-y-4">
       {/* Desktop Table */}
-      <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="hidden md:block bg-white rounded-2xl shadow-sm shadow-slate-200/50 overflow-hidden">
         <table className="w-full text-lg">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-16">순번</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-20">코드</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700">제목</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-24">분류</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-28">필자</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-700 w-40">액션</th>
+            <tr className="bg-slate-50/50 border-b border-slate-200">
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-16">순번</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-20">코드</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600">제목</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-24">분류</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-28">필자</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600 w-40">액션</th>
             </tr>
           </thead>
           <tbody>
             {chapters.map(ch => (
-              <tr key={ch.id} className="border-b border-gray-100">
+              <tr key={ch.id} className="border-b border-slate-100">
                 {editingId === ch.id ? (
                   <>
                     <td className="px-3 py-2">
@@ -668,13 +668,13 @@ function TocTab({
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => onSaveEdit(ch.id)}
-                          className="px-3 py-1.5 text-base font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                          className="px-3 py-1.5 text-base font-medium text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-lg shadow-sm hover:shadow-md transition-all"
                         >
                           저장
                         </button>
                         <button
                           onClick={onCancelEdit}
-                          className="px-3 py-1.5 text-base font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="px-3 py-1.5 text-base font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                         >
                           취소
                         </button>
@@ -683,23 +683,23 @@ function TocTab({
                   </>
                 ) : (
                   <>
-                    <td className="px-4 py-3 text-gray-500">{ch.order_number}</td>
-                    <td className="px-4 py-3 font-medium">{ch.chapter_code}</td>
-                    <td className="px-4 py-3">{ch.title}</td>
-                    <td className="px-4 py-3 text-gray-600">{ch.category || '-'}</td>
-                    <td className="px-4 py-3 text-gray-600">{ch.writer_name || '미배정'}</td>
+                    <td className="px-4 py-3 text-slate-400">{ch.order_number}</td>
+                    <td className="px-4 py-3 font-medium text-slate-800">{ch.chapter_code}</td>
+                    <td className="px-4 py-3 text-slate-800">{ch.title}</td>
+                    <td className="px-4 py-3 text-slate-600">{ch.category || '-'}</td>
+                    <td className="px-4 py-3 text-slate-600">{ch.writer_name || '미배정'}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => onStartEdit(ch)}
-                          className="px-3 py-1.5 text-base font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
+                          className="px-3 py-1.5 text-base font-medium text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors"
                         >
                           수정
                         </button>
                         {canDelete(ch.status) && (
                           <button
                             onClick={() => onDelete(ch)}
-                            className="px-3 py-1.5 text-base font-medium text-red-600 hover:text-red-800 transition-colors"
+                            className="px-3 py-1.5 text-base font-medium text-red-500 hover:text-red-700 transition-colors"
                           >
                             삭제
                           </button>
@@ -712,7 +712,7 @@ function TocTab({
             ))}
             {chapters.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-gray-400 text-lg">
+                <td colSpan={6} className="px-4 py-10 text-center text-slate-400 text-lg">
                   등록된 항목이 없습니다
                 </td>
               </tr>
@@ -724,12 +724,12 @@ function TocTab({
       {/* Mobile Cards */}
       <div className="md:hidden space-y-3">
         {chapters.map(ch => (
-          <div key={ch.id} className="bg-white rounded-xl border border-gray-200 p-4">
+          <div key={ch.id} className="bg-white rounded-2xl shadow-sm shadow-slate-200/50 p-4">
             {editingId === ch.id ? (
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-base text-gray-600 mb-1">순번</label>
+                    <label className="block text-base text-slate-600 mb-1">순번</label>
                     <input
                       type="number"
                       value={editForm.order_number}
@@ -738,7 +738,7 @@ function TocTab({
                     />
                   </div>
                   <div>
-                    <label className="block text-base text-gray-600 mb-1">코드</label>
+                    <label className="block text-base text-slate-600 mb-1">코드</label>
                     <input
                       type="text"
                       value={editForm.chapter_code}
@@ -748,7 +748,7 @@ function TocTab({
                   </div>
                 </div>
                 <div>
-                  <label className="block text-base text-gray-600 mb-1">제목</label>
+                  <label className="block text-base text-slate-600 mb-1">제목</label>
                   <input
                     type="text"
                     value={editForm.title}
@@ -758,7 +758,7 @@ function TocTab({
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-base text-gray-600 mb-1">분류</label>
+                    <label className="block text-base text-slate-600 mb-1">분류</label>
                     <select
                       value={editForm.category}
                       onChange={e => setEditForm({ ...editForm, category: e.target.value })}
@@ -769,7 +769,7 @@ function TocTab({
                     </select>
                   </div>
                   <div>
-                    <label className="block text-base text-gray-600 mb-1">필자</label>
+                    <label className="block text-base text-slate-600 mb-1">필자</label>
                     <select
                       value={editForm.writer_id}
                       onChange={e => setEditForm({ ...editForm, writer_id: e.target.value })}
@@ -783,13 +783,13 @@ function TocTab({
                 <div className="flex items-center gap-3 pt-1">
                   <button
                     onClick={() => onSaveEdit(ch.id)}
-                    className="h-12 px-5 text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="h-12 px-5 text-base font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-lg shadow-sm hover:shadow-md transition-all"
                   >
                     저장
                   </button>
                   <button
                     onClick={onCancelEdit}
-                    className="h-12 px-5 text-base font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="h-12 px-5 text-base font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                   >
                     취소
                   </button>
@@ -799,8 +799,8 @@ function TocTab({
               <>
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-lg font-semibold">{ch.chapter_code}. {ch.title}</div>
-                    <div className="text-base text-gray-600 mt-1">
+                    <div className="text-lg font-semibold text-slate-800">{ch.chapter_code}. {ch.title}</div>
+                    <div className="text-base text-slate-600 mt-1">
                       분류: {ch.category || '-'} · 필자: {ch.writer_name || '미배정'}
                     </div>
                   </div>
@@ -808,14 +808,14 @@ function TocTab({
                 <div className="flex items-center gap-3 mt-3">
                   <button
                     onClick={() => onStartEdit(ch)}
-                    className="h-12 px-4 text-base font-medium text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
+                    className="h-12 px-4 text-base font-medium text-indigo-600 border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors"
                   >
                     수정
                   </button>
                   {canDelete(ch.status) && (
                     <button
                       onClick={() => onDelete(ch)}
-                      className="h-12 px-4 text-base font-medium text-red-600 hover:text-red-800 transition-colors"
+                      className="h-12 px-4 text-base font-medium text-red-500 hover:text-red-700 transition-colors"
                     >
                       삭제
                     </button>
@@ -826,17 +826,17 @@ function TocTab({
           </div>
         ))}
         {chapters.length === 0 && (
-          <div className="text-center py-10 text-gray-400 text-lg">등록된 항목이 없습니다</div>
+          <div className="text-center py-10 text-slate-400 text-lg">등록된 항목이 없습니다</div>
         )}
       </div>
 
       {/* Add Form */}
       {showAddForm && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800">새 항목 추가</h3>
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-4">
+          <h3 className="text-lg font-semibold text-slate-800">새 항목 추가</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-base text-gray-600 mb-1">순번</label>
+              <label className="block text-base text-slate-600 mb-1">순번</label>
               <input
                 type="number"
                 value={addForm.order_number}
@@ -845,7 +845,7 @@ function TocTab({
               />
             </div>
             <div>
-              <label className="block text-base text-gray-600 mb-1">코드</label>
+              <label className="block text-base text-slate-600 mb-1">코드</label>
               <input
                 type="text"
                 value={addForm.chapter_code}
@@ -855,7 +855,7 @@ function TocTab({
               />
             </div>
             <div className="col-span-2 md:col-span-1">
-              <label className="block text-base text-gray-600 mb-1">제목</label>
+              <label className="block text-base text-slate-600 mb-1">제목</label>
               <input
                 type="text"
                 value={addForm.title}
@@ -865,7 +865,7 @@ function TocTab({
               />
             </div>
             <div>
-              <label className="block text-base text-gray-600 mb-1">분류</label>
+              <label className="block text-base text-slate-600 mb-1">분류</label>
               <select
                 value={addForm.category}
                 onChange={e => setAddForm({ ...addForm, category: e.target.value })}
@@ -876,7 +876,7 @@ function TocTab({
               </select>
             </div>
             <div>
-              <label className="block text-base text-gray-600 mb-1">필자</label>
+              <label className="block text-base text-slate-600 mb-1">필자</label>
               <select
                 value={addForm.writer_id}
                 onChange={e => setAddForm({ ...addForm, writer_id: e.target.value })}
@@ -890,13 +890,13 @@ function TocTab({
           <div className="flex items-center gap-3 pt-2">
             <button
               onClick={onSaveAdd}
-              className="h-12 px-6 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              className="h-12 px-6 text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-lg shadow-sm hover:shadow-md transition-all"
             >
               저장
             </button>
             <button
               onClick={onCancelAdd}
-              className="h-12 px-6 text-lg font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+              className="h-12 px-6 text-lg font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
             >
               취소
             </button>
@@ -908,9 +908,9 @@ function TocTab({
       {!showAddForm && (
         <button
           onClick={onOpenAddForm}
-          className="h-14 w-full text-lg font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors"
+          className="h-14 w-full text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-2xl shadow-sm hover:shadow-md transition-all"
         >
-          ＋ 항목 추가
+          + 항목 추가
         </button>
       )}
     </div>
