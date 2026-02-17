@@ -1,6 +1,7 @@
 'use client'
 
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import Link from 'next/link'
 
 const ROLE_COLORS: Record<string, string> = {
@@ -46,6 +47,7 @@ export default function GuideContent({
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-8">
           <article className="guide-article">
             <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
               components={{
                 h1: ({ children }) => (
                   <h1 className="text-2xl font-bold text-slate-800 mb-6 pb-3 border-b-2 border-slate-200">{children}</h1>
@@ -74,35 +76,34 @@ export default function GuideContent({
                 blockquote: ({ children }) => (
                   <blockquote className="border-l-4 border-indigo-300 bg-indigo-50/50 pl-4 py-2 my-4 rounded-r-lg text-slate-600 [&>p]:mb-0">{children}</blockquote>
                 ),
+                pre: ({ children }) => (
+                  <pre className="bg-stone-50 border border-stone-200 rounded-xl p-4 my-4 text-sm overflow-x-auto text-slate-700">{children}</pre>
+                ),
                 code: ({ children, className }) => {
-                  const isBlock = className?.includes('language-')
-                  if (isBlock) {
+                  // 코드블록 안의 code (pre > code)
+                  if (className?.includes('language-') || (typeof children === 'string' && children.includes('\n'))) {
                     return (
-                      <code className="block bg-slate-50 border border-slate-200 rounded-xl p-4 my-4 text-sm font-mono text-slate-700 overflow-x-auto whitespace-pre">
-                        {children}
-                      </code>
+                      <code className="font-mono text-sm whitespace-pre">{children}</code>
                     )
                   }
+                  // 인라인 코드
                   return (
                     <code className="bg-slate-100 text-indigo-600 px-1.5 py-0.5 rounded text-sm font-mono">{children}</code>
                   )
                 },
-                pre: ({ children }) => (
-                  <pre className="bg-slate-800 text-slate-100 rounded-xl p-4 my-4 text-sm overflow-x-auto">{children}</pre>
-                ),
                 table: ({ children }) => (
-                  <div className="overflow-x-auto my-4">
-                    <table className="w-full text-sm border-collapse border border-slate-200 rounded-lg overflow-hidden">{children}</table>
+                  <div className="overflow-x-auto my-4 rounded-lg border border-slate-200">
+                    <table className="w-full text-sm border-collapse">{children}</table>
                   </div>
                 ),
                 thead: ({ children }) => (
                   <thead className="bg-slate-50">{children}</thead>
                 ),
                 th: ({ children }) => (
-                  <th className="px-3 py-2 text-left font-semibold text-slate-700 border border-slate-200">{children}</th>
+                  <th className="px-3 py-2.5 text-left font-semibold text-slate-700 border-b border-slate-200">{children}</th>
                 ),
                 td: ({ children }) => (
-                  <td className="px-3 py-2 text-slate-600 border border-slate-200">{children}</td>
+                  <td className="px-3 py-2.5 text-slate-600 border-b border-slate-100">{children}</td>
                 ),
                 hr: () => <hr className="my-8 border-slate-200" />,
               }}
