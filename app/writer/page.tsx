@@ -7,6 +7,7 @@ import { createBrowserClient } from '@/lib/supabase-browser'
 import Timeline from '@/app/components/Timeline'
 import ProgressOverview from '@/app/components/ProgressOverview'
 import type { ChapterSummary } from '@/app/components/ProgressOverview'
+import DiffView from '@/app/components/DiffView'
 
 type Session = {
   userId: string
@@ -86,7 +87,7 @@ export default function WriterPage() {
       const res = await fetch('/api/me')
       if (!res.ok) { router.push('/'); return }
       const { session: sess } = await res.json()
-      if (!sess) { router.push('/'); return }
+      if (!sess || sess.role !== 'writer') { router.push('/'); return }
       setSession(sess)
 
       const supabase = createBrowserClient()
@@ -200,13 +201,26 @@ export default function WriterPage() {
     setSaving(chapterId)
     try {
       const supabase = createBrowserClient()
-      const chapter = chapters.find(c => c.id === chapterId)
+
+      // 서버에서 최신 상태 확인
+      const { data: current } = await (supabase
+        .from('chapters') as any)
+        .select('status')
+        .eq('id', chapterId)
+        .single() as { data: { status: string } | null }
+
+      if (current && current.status !== 'draft' && current.status !== 'submitted') {
+        showToast('교정이 시작되어 수정할 수 없습니다.', 'error')
+        await loadData()
+        return
+      }
+
       const updateData: Record<string, string> = {
         original_body: bodies[chapterId] ?? '',
         updated_at: new Date().toISOString(),
       }
       // submitted 상태에서 저장하면 draft로 되돌림
-      if (chapter?.status === 'submitted') {
+      if (current?.status === 'submitted') {
         updateData.status = 'draft'
       }
       const { error } = await (supabase
@@ -214,6 +228,7 @@ export default function WriterPage() {
         .update(updateData)
         .eq('id', chapterId)
         .eq('writer_id', session.userId)
+        .in('status', ['draft', 'submitted'])
 
       if (error) throw error
 
@@ -252,6 +267,20 @@ export default function WriterPage() {
     setSubmitting(chapterId)
     try {
       const supabase = createBrowserClient()
+
+      // 서버에서 최신 상태 확인
+      const { data: current } = await (supabase
+        .from('chapters') as any)
+        .select('status')
+        .eq('id', chapterId)
+        .single() as { data: { status: string } | null }
+
+      if (current && current.status !== 'draft' && current.status !== 'submitted') {
+        showToast('교정이 시작되어 제출할 수 없습니다.', 'error')
+        await loadData()
+        return
+      }
+
       const now = new Date().toISOString()
       const { error } = await (supabase
         .from('chapters') as any)
@@ -263,6 +292,7 @@ export default function WriterPage() {
         })
         .eq('id', chapterId)
         .eq('writer_id', session.userId)
+        .in('status', ['draft', 'submitted'])
 
       if (error) throw error
 
@@ -291,7 +321,8 @@ export default function WriterPage() {
 
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i]
-        const filePath = `${chapterId}/${Date.now()}_${file.name}`
+        const ext = file.name.split('.').pop() || 'bin'
+        const filePath = `${chapterId}/${Date.now()}_${i}.${ext}`
 
         const { error: uploadError } = await supabase.storage
           .from('photos')
@@ -390,7 +421,7 @@ export default function WriterPage() {
   }
 
   const isLocked = (status: string) =>
-    status === 'editing' || status === 'confirmed'
+    status === 'editing' || status === 'reviewed' || status === 'confirmed'
 
   return (
     <div className="min-h-screen bg-[#f8f7f4]">
@@ -570,7 +601,15 @@ function ChapterCard({
       {/* 카드 본문 */}
       {expanded && (
         <div className="px-4 pb-5 space-y-4 border-t border-slate-100 pt-4">
-          {/* textarea */}
+          {/* 잠금 상태 + 교정본 있으면 탭 뷰 */}
+          {locked && chapter.edited_body ? (
+            <LockedContentView
+              originalBody={chapter.original_body ?? ''}
+              editedBody={chapter.edited_body}
+              status={chapter.status}
+            />
+          ) : (
+          /* textarea (편집 가능 상태) */
           <div>
             <textarea
               ref={textareaRef}
@@ -587,6 +626,7 @@ function ChapterCard({
             />
             <p className="text-xs text-slate-500 mt-1 text-right">{body.length}자</p>
           </div>
+          )}
 
           {/* 파일 영역 */}
           <div className="space-y-3">
@@ -797,6 +837,83 @@ function WorkflowSteps({ status }: { status: string }) {
           </div>
         )
       })}
+    </div>
+  )
+}
+
+// ─── Locked Content View (원본/교정본 탭) ────────────────
+
+const STATUS_LABEL: Record<string, string> = {
+  editing: '교정중',
+  reviewed: '교정완료',
+  confirmed: '확정',
+}
+
+function LockedContentView({
+  originalBody,
+  editedBody,
+  status,
+}: {
+  originalBody: string
+  editedBody: string
+  status: string
+}) {
+  const [tab, setTab] = useState<'edited' | 'original' | 'diff'>('edited')
+  const label = STATUS_LABEL[status] || status
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg">
+          {label} - 수정 불가
+        </span>
+      </div>
+      <div className="flex gap-1.5 mb-3">
+        <button
+          onClick={() => setTab('edited')}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+            tab === 'edited' ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+          }`}
+        >
+          교정본
+        </button>
+        <button
+          onClick={() => setTab('original')}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+            tab === 'original' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+          }`}
+        >
+          내 원본
+        </button>
+        <button
+          onClick={() => setTab('diff')}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+            tab === 'diff' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+          }`}
+        >
+          변경사항
+        </button>
+      </div>
+      <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 min-h-[160px] max-h-[70vh] overflow-y-auto">
+        {tab === 'edited' && (
+          <div className="whitespace-pre-wrap text-base leading-relaxed text-slate-800">
+            {editedBody}
+          </div>
+        )}
+        {tab === 'original' && (
+          <div className="whitespace-pre-wrap text-base leading-relaxed text-slate-800">
+            {originalBody || <span className="text-slate-400">(내용 없음)</span>}
+          </div>
+        )}
+        {tab === 'diff' && (
+          <DiffView original={originalBody} edited={editedBody} />
+        )}
+      </div>
+      <div className="flex justify-end mt-1">
+        <span className="text-xs text-slate-400">
+          원본 {originalBody.length}자 / 교정본 {editedBody.length}자
+        </span>
+      </div>
     </div>
   )
 }
